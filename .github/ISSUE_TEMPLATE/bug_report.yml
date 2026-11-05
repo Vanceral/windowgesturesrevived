@@ -1,0 +1,54 @@
+name: Bug report
+description: Report a problem with a gesture or extension setting
+labels: [bug]
+body:
+  - type: input
+    id: shell-version
+    attributes:
+      label: GNOME Shell version
+      placeholder: "51.1"
+    validations:
+      required: true
+  - type: input
+    id: distribution
+    attributes:
+      label: Linux distribution and version
+      placeholder: "Fedora 45"
+    validations:
+      required: true
+  - type: dropdown
+    id: session
+    attributes:
+      label: Session type
+      options:
+        - Wayland
+        - X11
+    validations:
+      required: true
+  - type: textarea
+    id: gesture
+    attributes:
+      label: Gesture and configured action
+      description: Include the finger count, direction, and action assigned in preferences.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps and actual result
+      description: Describe how to reproduce the issue and what happened.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant GNOME Shell logs
+      description: Remove unrelated private information before posting.
+    validations:
+      required: false
