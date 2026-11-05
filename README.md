@@ -10,6 +10,15 @@ Window Gestures Revived is a community continuation of [Window Gestures](https:/
 - Maximize, restore, fullscreen, and snap windows
 - Customize gesture thresholds, acceleration, and interface placement
 
+## Move a window, then move on
+
+With the default gesture setup, a four-finger horizontal swipe sends the focused window to the adjacent workspace. Then use GNOME's three-finger workspace swipe to move on; the window stays on the workspace where you placed it. Each four-finger gesture moves one workspace at a time.
+
+![Illustrated three-step guide: use four fingers to move the focused window to the adjacent workspace, then three fingers to navigate onward](docs/gesture-workflow.svg)
+
+This is an original explanatory illustration, not a GNOME Shell screenshot. The exact appearance can vary with your GNOME theme and version.
+
+
 ## Compatibility
 
 The extension metadata declares GNOME Shell 45 through 51. The GNOME 51 port, renamed extension, and preferences were installed and used on Fedora 45 by the maintainer. Other declared Shell versions have not all been exercised as part of this fork's porting work.
