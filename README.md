@@ -18,6 +18,19 @@ With the default gesture setup, a four-finger horizontal swipe sends the focused
 
 This is an original explanatory illustration, not a GNOME Shell screenshot. The exact appearance can vary with your GNOME theme and version.
 
+## Resize, peek, and personalize
+
+Four-finger vertical swipes follow the focused window's state: up maximizes it, up again makes it fullscreen, and down steps back through those states. Once restored, assign **Minimize** to the configurable swipe-down action if you want another down swipe to tuck it away.
+
+The default three-finger shortcuts include swipe down to show the desktop, pinch in to minimize the focused window, and pinch out to show the desktop. Four-finger pinch actions are off until assigned. Change configurable swipe and pinch actions in the extension preferences.
+
+![Matching illustrated guide to four-finger window sizing, three-finger desktop and pinch shortcuts, and customizable four-finger pinches](docs/gesture-actions.svg)
+
+This is an original explanatory illustration, not a GNOME Shell screenshot.
+
+
+
+
 
 ## Compatibility
 
