@@ -27,14 +27,48 @@ export default class extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         const GNOME_VER = parseFloat(PACKAGE_VERSION);
         const SUPPORT_PINCH = (GNOME_VER < 46)||(GNOME_VER>=48.2);
-        const WEBSITE_LINK = "https://amarullz.com/";
-        const PAYPAL_LINK = "https://paypal.me/amarullz";
+        const DONATION_URL = 'https://ko-fi.com/vanceral';
+        const ORIGINAL_PROJECT_URL = 'https://github.com/amarullz/windowgestures';
         const GNU_SOFTWARE = '<span size="small">' +
             'This program comes with absolutely no warranty.\n' +
             'See the <a href="https://gnu.org/licenses/old-licenses/gpl-2.0.html">' +
             'GNU General Public License, version 2 or later</a> for details.' +
             '</span>';
         let isSwap = this.getSettings().get_boolean('three-finger');
+
+        // Support
+        const support = new Adw.PreferencesGroup({
+            title: "A way to say thanks"
+        });
+        const supportRow = new Adw.ActionRow({
+            title: "Say thanks with Ko-fi",
+            subtitle: "The GNOME 51 port took a lot of time, research, and debugging. If it has been useful to you, a small Ko-fi tip is a lovely way to say thanks.",
+            activatable: Boolean(DONATION_URL),
+        });
+        supportRow.add_prefix(new Gtk.Image({
+            file: this.dir.get_child('donation-qr.svg').get_path(),
+            pixel_size: 112,
+            tooltip_text: 'QR code for ko-fi.com/vanceral',
+        }));
+        if (DONATION_URL) {
+            supportRow.add_suffix(new Gtk.Image({
+                icon_name: 'adw-external-link-symbolic',
+                valign: Gtk.Align.CENTER,
+            }));
+            supportRow.connect('activated', () => {
+                Gtk.show_uri(window, DONATION_URL, Gdk.CURRENT_TIME);
+            });
+        }
+        support.add(supportRow);
+
+        // Workspace guidance
+        const workspaceSetup = new Adw.PreferencesGroup({
+            title: "Recommended workspace setup"
+        });
+        workspaceSetup.add(new Adw.ActionRow({
+            title: "Use a fixed number of workspaces",
+            subtitle: "In GNOME Settings → Multitasking → Workspaces, choose Fixed Number of Workspaces. Eight workspaces are recommended. Dynamic workspaces can remove empty destinations and make window moves feel less predictable."
+        }));
 
         // Gesture Settings
         const gestures = new Adw.PreferencesGroup({ title: "Gestures" });
@@ -211,7 +245,7 @@ export default class extends ExtensionPreferences {
         // About
         const about = new Adw.PreferencesGroup({ title: "About" });
         const aboutVersion = new Adw.ActionRow({
-            title: 'Window Gestures Version',
+            title: 'Window Gestures Revived Version',
         });
         aboutVersion.add_suffix(new Gtk.Label({
             label: this.metadata.version.toString(),
@@ -228,12 +262,26 @@ export default class extends ExtensionPreferences {
         }));
         about.add(gnomeVersion);
 
-        const githubRow = this._createLinkRow(window, 'Source Github', this.metadata.url);
+        const githubRow = this._createLinkRow(window, 'Window Gestures Revived on GitHub', this.metadata.url);
         about.add(githubRow);
-        const websiteRow = this._createLinkRow(window, 'Visit Website', WEBSITE_LINK);
-        about.add(websiteRow);
-        const donateRow = this._createLinkRow(window, 'Donate via PayPal', PAYPAL_LINK);
-        about.add(donateRow);
+        about.add(this._createLinkRow(
+            window, 'Original Window Gestures project', ORIGINAL_PROJECT_URL
+        ));
+        const aboutSupportRow = new Adw.ActionRow({
+            title: 'Say thanks via Ko-fi',
+            subtitle: 'The port took a lot of work. If you have found it useful, a small tip is appreciated.',
+            activatable: Boolean(DONATION_URL),
+        });
+        if (DONATION_URL) {
+            aboutSupportRow.add_suffix(new Gtk.Image({
+                icon_name: 'adw-external-link-symbolic',
+                valign: Gtk.Align.CENTER,
+            }));
+            aboutSupportRow.connect('activated', () => {
+                Gtk.show_uri(window, DONATION_URL, Gdk.CURRENT_TIME);
+            });
+        }
+        about.add(aboutSupportRow);
 
         // GNU
         const gnuSoftwareGroup = new Adw.PreferencesGroup();
@@ -251,6 +299,8 @@ export default class extends ExtensionPreferences {
         gnuSoftwareGroup.add(gnuSofwareLabelBox);
 
         const page = new Adw.PreferencesPage();
+        page.add(support);
+        page.add(workspaceSetup);
         page.add(gestures);
         page.add(act1);
         page.add(act2);

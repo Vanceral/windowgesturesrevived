@@ -18,6 +18,7 @@
 
 import Clutter from 'gi://Clutter';
 import Meta from 'gi://Meta';
+import Mtk from 'gi://Mtk';
 import St from 'gi://St';
 import Shell from 'gi://Shell';
 import Gio from 'gi://Gio';
@@ -59,6 +60,29 @@ const WindowClassBlacklist = [
     "gjs"
 ];
 
+// GNOME 49 replaced Meta.Rectangle with Mtk.Rectangle and changed the
+// Meta.Window maximize API. Keep the older calls for GNOME 45–48.
+function isWindowMaximized(window) {
+    if (typeof window.is_maximized === 'function')
+        return window.is_maximized();
+
+    return window.get_maximized() !== Meta.MaximizeFlags.NONE;
+}
+
+function maximizeWindow(window) {
+    if (typeof window.set_maximize_flags === 'function')
+        window.maximize();
+    else
+        window.maximize(Meta.MaximizeFlags.BOTH);
+}
+
+function unmaximizeWindow(window) {
+    if (typeof window.set_unmaximize_flags === 'function')
+        window.unmaximize();
+    else
+        window.unmaximize(Meta.MaximizeFlags.BOTH);
+}
+
 // Manager Class
 class Manager {
 
@@ -71,7 +95,10 @@ class Manager {
         this._hooked = false;
 
         // Create virtual devices
-        const seat = Clutter.get_default_backend().get_default_seat();
+        // Clutter.get_default_backend() was removed in GNOME 51.
+        const backend = global.stage.context?.get_backend?.() ??
+            Clutter.get_default_backend();
+        const seat = backend.get_default_seat();
         this._virtualTouchpad = seat.create_virtual_device(
             Clutter.InputDeviceType.POINTER_DEVICE
         );
@@ -465,6 +492,7 @@ class Manager {
             );
         }
     }
+
     _tick() {
         return new Date().getTime();
     }
@@ -557,7 +585,7 @@ class Manager {
             return;
         }
         global.window_manager.emit("show-tile-preview",
-            global.display.get_focus_window(), new Meta.Rectangle(
+            global.display.get_focus_window(), new Mtk.Rectangle(
                 { x: rx, y: ry, width: rw, height: rh }
             )
             , this._monitorId
@@ -1038,7 +1066,7 @@ class Manager {
             }
             if (setmove) {
                 if (this._targetWindow.allows_move() &&
-                    !this._targetWindow.get_maximized()) {
+                    !isWindowMaximized(this._targetWindow)) {
                     this._edgeAction = WindowEdgeAction.MOVE;
                 }
             }
@@ -1100,7 +1128,7 @@ class Manager {
                             let holdMove = this._getTapHoldMove();
 
                             if (!allowMove || holdMove) {
-                                if (!this._targetWindow.get_maximized() &&
+                                if (!isWindowMaximized(this._targetWindow) &&
                                     !this._targetWindow.isTiled) {
                                     this._edgeGestured = 1;
                                 }
@@ -1111,7 +1139,7 @@ class Manager {
                             else if (
                                 !this._edgeGestured &&
                                 !this._targetWindow.is_fullscreen() &&
-                                !this._targetWindow.get_maximized() &&
+                                !isWindowMaximized(this._targetWindow) &&
                                 this._targetWindow.allows_move()) {
                                 this._edgeAction = WindowEdgeAction.MOVE;
                                 return this._swipeUpdateMove();
@@ -1330,7 +1358,7 @@ class Manager {
             if (this._isEdge(WindowEdgeAction.MOVE_SNAP_TOP)) {
                 if (this._targetWindow.can_maximize()) {
                     this._resetWinPos();
-                    this._targetWindow.maximize(Meta.MaximizeFlags.BOTH);
+                    maximizeWindow(this._targetWindow);
                 }
             }
             else if (this._isEdge(WindowEdgeAction.MOVE_SNAP_LEFT)) {
@@ -1550,7 +1578,7 @@ class Manager {
                         activeWin = global.display.get_focus_window();
                     }
                     if (activeWin && ((activeWin.allows_move() &&
-                        !activeWin.get_maximized()) || !isWin)) {
+                        !isWindowMaximized(activeWin)) || !isWin)) {
                         activeWin.activate(
                             Meta.CURRENT_TIME
                         );
@@ -2502,10 +2530,10 @@ class Manager {
             }
 
             let winCanMax = activeWin.allows_move() && activeWin.can_maximize();
-            let winIsMaximized = activeWin.get_maximized();
-            let winMaxed = Meta.MaximizeFlags.BOTH == winIsMaximized;
+            let winIsMaximized = isWindowMaximized(activeWin);
+            let winMaxed = winIsMaximized;
             if (activeWin.isTiled) {
-                winIsMaximized = Meta.MaximizeFlags.VERTICAL;
+                winIsMaximized = true;
             }
             let winIsFullscreen = activeWin.is_fullscreen();
             let allowFullscreen = this._getEnableFullscreen();
@@ -2608,7 +2636,7 @@ class Manager {
                         }
                         if (this._actionWidgets[wid] && (progress > 0)) {
                             if (ui == 1) {
-                                activeWin.maximize(Meta.MaximizeFlags.BOTH);
+                                maximizeWindow(activeWin);
                             }
                             else if (ui == 2) {
                                 this._setSnapWindow(0);
@@ -2647,9 +2675,7 @@ class Manager {
                             }
                             else if (ui == 6) {
                                 // restore
-                                activeWin.unmaximize(
-                                    Meta.MaximizeFlags.BOTH
-                                );
+                                unmaximizeWindow(activeWin);
                                 if (activeWin.isTiled) {
                                     this._sendKeyPress([
                                         Clutter.KEY_Super_L, Clutter.KEY_Down
