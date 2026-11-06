@@ -19,11 +19,14 @@
 - [x] Publish version 16 to GitHub; its first extensions.gnome.org review flagged legacy Meta.Window compatibility calls and a generated schema cache in the archive.
 - [x] Remove legacy GNOME 45–48 API fallbacks, keep only GNOME 49–51 declared, and split the Shell lifecycle entry point from the gesture manager.
 - [x] Build a version 17 archive with XML schemas only and include upstream attribution in the distributed manager module.
-- [x] Run Shexli 0.2.1 against version 17. It reports only EGO-M-004 because its metadata rule rejects every shell major above 50; GNOME 51 is stable, so keep 51 declared and treat this local finding as an analyzer false positive.
+- [x] Run Shexli 0.2.1 locally. Its outdated metadata rule flags GNOME 51 as a false positive; GNOME Extensions' analyzer reports no issues for submitted version 2.
 - [x] Install version 17 into the local GNOME profile and verify it is ACTIVE after logging back into GNOME Shell 51.1.
 - [x] Exercise version 17 on GNOME Shell 51.1: maintainer confirms all gestures; preferences launch command returned; disable/re-enable returned to ACTIVE.
 - [x] Build and verify the version 17 archive.
-- [ ] Publish version 17 source to GitHub and submit the archive to extensions.gnome.org for a new review. Shexli 0.2.1 reports one stale-version false positive for GNOME 51.
+- [x] Publish version 17 source and maintenance notes to the GitHub default branch.
+- [x] Submit version 17 to extensions.gnome.org for review 77992; its Shexli analyzer reports no issues.
+- [x] Post a reviewer note identifying upstream provenance, AI assistance, API changes, and tested GNOME Shell version.
+- [ ] Await the review decision for version 2.
 
 ## Repeatable release checklist
 
