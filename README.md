@@ -16,7 +16,7 @@ With the default gesture setup, a four-finger horizontal swipe sends the focused
 
 ![Illustrated three-step guide: use four fingers to move the focused window to the adjacent workspace, then three fingers to navigate onward](docs/gesture-workflow.svg)
 
-This is an original explanatory illustration, not a GNOME Shell screenshot. The exact appearance can vary with your GNOME theme and version.
+NOTE: explanatory illustration
 
 ## Resize, peek, and personalize
 
@@ -26,7 +26,7 @@ The default three-finger shortcuts include swipe down to show the desktop, pinch
 
 ![Matching illustrated guide to four-finger window sizing, three-finger desktop and pinch shortcuts, and customizable four-finger pinches](docs/gesture-actions.svg)
 
-This is an original explanatory illustration, not a GNOME Shell screenshot.
+NOTE: explanatory illustration
 
 
 
