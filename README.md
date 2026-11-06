@@ -28,9 +28,19 @@ The default three-finger shortcuts include swipe down to show the desktop, pinch
 
 GNOME 51 Shell-style illustration, not a captured screenshot.
 
+## Resize, peek, and personalize
+
+Four-finger vertical swipes follow the focused window's state: up maximizes it, up again makes it fullscreen, and down steps back through those states. Once restored, assign **Minimize** to the configurable swipe-down action if you want another down swipe to tuck it away.
+
+The default three-finger shortcuts include swipe down to show the desktop, pinch in to minimize the focused window, and pinch out to show the desktop. Four-finger pinch actions are off until assigned. Change configurable swipe and pinch actions in the extension preferences.
+
+![Matching illustrated guide to four-finger window sizing, three-finger desktop and pinch shortcuts, and customizable four-finger pinches](docs/gesture-actions.svg)
+
+GNOME 51 Shell-style illustration, not a captured screenshot.
+
 ## Compatibility
 
-The extension metadata declares GNOME Shell 45 through 51. The GNOME 51 port, renamed extension, and preferences were installed and used on Fedora 45 by the maintainer. Other declared Shell versions have not all been exercised as part of this fork's porting work.
+The extension metadata declares GNOME Shell 49 through 51. The GNOME 51 port, renamed extension, and preferences were installed and used on Fedora 45 by the maintainer. GNOME Shell 49 and 50 are declared based on their documented APIs but have not been exercised in separate Shell sessions. GNOME 45 through 48 are no longer declared: this port uses the `Mtk.Rectangle` and `Meta.Window` APIs introduced in GNOME 49.
 
 The extension uses GNOME Shell internals. New GNOME versions are added only after reviewing their extension upgrade guide and adapting affected APIs. See [TASKS.md](TASKS.md) for the current maintenance and release checklist.
 
@@ -57,7 +67,7 @@ The build requires `glib-compile-schemas` and `zip`. From the repository root, r
 ./build.sh
 ```
 
-The script strictly validates the GSettings schema and creates `windowgesturesrevived@vanceral.github.io.zip`. Generated schema caches and ZIP archives are build outputs and should not be committed.
+The script strictly validates the GSettings schema without creating a cache, then creates `windowgesturesrevived@vanceral.github.io.zip` with the XML schema only. GNOME Shell compiles the schema as needed. Generated schema caches and ZIP archives should not be committed.
 
 ## Report an issue
 
