@@ -25,8 +25,6 @@ import { PACKAGE_VERSION } from 'resource:///org/gnome/Shell/Extensions/js/misc/
 
 export default class extends ExtensionPreferences {
     fillPreferencesWindow(window) {
-        const GNOME_VER = parseFloat(PACKAGE_VERSION);
-        const SUPPORT_PINCH = (GNOME_VER < 46)||(GNOME_VER>=48.2);
         const DONATION_URL = 'https://ko-fi.com/vanceral';
         const ORIGINAL_PROJECT_URL = 'https://github.com/amarullz/windowgestures';
         const GNU_SOFTWARE = '<span size="small">' +
@@ -67,7 +65,9 @@ export default class extends ExtensionPreferences {
         });
         workspaceSetup.add(new Adw.ActionRow({
             title: "Use a fixed number of workspaces",
-            subtitle: "In GNOME Settings → Multitasking → Workspaces, choose Fixed Number of Workspaces. Eight workspaces are recommended. Dynamic workspaces can remove empty destinations and make window moves feel less predictable."
+            subtitle: "In GNOME Settings → Multitasking → Workspaces, choose Fixed Number of Workspaces. " +
+                "Eight workspaces are recommended. Dynamic workspaces can remove empty destinations and " +
+                "make window moves feel less predictable."
         }));
 
         // Gesture Settings
@@ -92,13 +92,11 @@ export default class extends ExtensionPreferences {
 
         // Function Settings
         const fn = new Adw.PreferencesGroup({ title: "Active Functions" });
-        if (SUPPORT_PINCH) {
-            this._createSwitch(
-                fn, "pinch-enable",
-                "Enable pinch gestures",
-                ""
-            );
-        }
+        this._createSwitch(
+            fn, "pinch-enable",
+            "Enable pinch gestures",
+            ""
+        );
         this._createSwitch(
             fn, "fn-resize",
             "Enable resize window",
@@ -182,18 +180,15 @@ export default class extends ExtensionPreferences {
         this._createCombo(act2, "swipe3-downup",
             "Swipe down > up", "", action_list);
 
-        var act3 = null;
-        if (SUPPORT_PINCH) {
-            act3 = new Adw.PreferencesGroup({ title: "Pinch Actions" });
-            this._createCombo(act3, "pinch3-in",
-                "Pinch-in 3 fingers", "", action_list);
-            this._createCombo(act3, "pinch3-out",
-                "Pinch-out 3 fingers", "", action_list);
-            this._createCombo(act3, "pinch4-in",
-                "Pinch-in 4 fingers", "", action_list);
-            this._createCombo(act3, "pinch4-out",
-                "Pinch-out 4 fingers", "", action_list);
-        }
+        const act3 = new Adw.PreferencesGroup({ title: "Pinch Actions" });
+        this._createCombo(act3, "pinch3-in",
+            "Pinch-in 3 fingers", "", action_list);
+        this._createCombo(act3, "pinch3-out",
+            "Pinch-out 3 fingers", "", action_list);
+        this._createCombo(act3, "pinch4-in",
+            "Pinch-in 4 fingers", "", action_list);
+        this._createCombo(act3, "pinch4-out",
+            "Pinch-out 4 fingers", "", action_list);
 
 
         // Function Settings
@@ -230,16 +225,14 @@ export default class extends ExtensionPreferences {
             "Gesture acceleration",
             "",
             10, 25, 1);
-        if (SUPPORT_PINCH) {
-            this._createSpin(tweaks, "pinch-in-scale",
-                "Pinch in scale target",
-                "",
-                30, 80, 5);
-            this._createSpin(tweaks, "pinch-out-scale",
-                "Pinch out scale target",
-                "",
-                120, 200, 5);
-        }
+        this._createSpin(tweaks, "pinch-in-scale",
+            "Pinch in scale target",
+            "",
+            30, 80, 5);
+        this._createSpin(tweaks, "pinch-out-scale",
+            "Pinch out scale target",
+            "",
+            120, 200, 5);
 
 
         // About
@@ -304,9 +297,7 @@ export default class extends ExtensionPreferences {
         page.add(gestures);
         page.add(act1);
         page.add(act2);
-        if (SUPPORT_PINCH && act3) {
-            page.add(act3);
-        }
+        page.add(act3);
         page.add(fn);
         page.add(ui);
         page.add(tweaks);
