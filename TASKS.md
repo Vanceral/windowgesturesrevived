@@ -26,7 +26,9 @@
 - [x] Publish version 17 source and maintenance notes to the GitHub default branch.
 - [x] Submit version 17 to extensions.gnome.org for review 77992; its Shexli analyzer reports no issues.
 - [x] Post a reviewer note identifying upstream provenance, AI assistance, API changes, and tested GNOME Shell version.
-- [ ] Await the review decision for version 2.
+- [x] Review 77992 rejected version 17 for timeout replacement/tracking and unnecessary generated comments.
+- [ ] Build, inspect, and submit version 18 with all manager timeouts tracked and cleared on replacement and destroy.
+- [ ] Await the review decision for version 3.
 
 ## Repeatable release checklist
 
