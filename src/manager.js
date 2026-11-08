@@ -62,13 +62,12 @@ const WindowClassBlacklist = [
     "gjs"
 ];
 
-// Manager Class
 export class Manager {
 
-    // Init Extension
     constructor(ext) {
         // Get settings
         this._settings = ext.getSettings();
+        this._timers = [];
 
         // Gestures are hooked by WGS
         this._hooked = false;
@@ -107,18 +106,32 @@ export class Manager {
         });
     }
 
-    // Clear potentially running timeout/interval
+    _clearTimeout(name) {
+        const remaining = [];
+        for (const timer of this._timers) {
+            if (timer.name === name) {
+                clearTimeout(timer.id);
+            } else {
+                remaining.push(timer);
+            }
+        }
+        this._timers = remaining;
+    }
+
+    _setTimeout(name, callback, delay) {
+        this._clearTimeout(name);
+        const id = setTimeout(() => {
+            this._timers = this._timers.filter(timer => timer.id !== id);
+            callback();
+        }, delay);
+        this._timers.push({ name, id });
+        return id;
+    }
+
     destroyTimers() {
-        if (this._holdTo) {
-            // hold waiter
-            clearTimeout(this._holdTo);
-            this._holdTo = null;
-        }
-        if (this._actionWidgets.resetWinlist) {
-            // Alt+Tab timeout
-            clearTimeout(this._actionWidgets.resetWinlist);
-            this._actionWidgets.resetWinlist = null;
-        }
+        for (const timer of this._timers)
+            clearTimeout(timer.id);
+        this._timers = [];
         if (this._keyRepeatInterval) {
             // Key repeat interval
             clearInterval(this._keyRepeatInterval);
@@ -129,15 +142,10 @@ export class Manager {
             clearInterval(this._flingInterval);
             this._flingInterval = null;
         }
-        if (this._actionWidgets.tilerHider) {
-            clearTimeout(this._actionWidgets.tilerHider);
-            this._actionWidgets.tilerHider = null;
-        }
     }
 
     // Cleanup Extension
     destroy() {
-        // clear timers
         this.destroyTimers();
 
         // restore default GNOME 3 fingers gesture
@@ -1548,7 +1556,7 @@ export class Manager {
         if (!isWin || this._getTapHoldMove()) {
             if (state) {
                 let me = this;
-                this._holdTo = setTimeout(function () {
+                this._setTimeout('holdTo', function () {
                     me._tapHold = 0;
                     let activeWin = null;
                     if (!me._getUseActiveWindow()) {
@@ -1589,11 +1597,8 @@ export class Manager {
                 }, 100);
             }
             else {
-                if (this._holdTo) {
-                    clearTimeout(this._holdTo);
-                }
+                this._clearTimeout('holdTo');
                 this._tapHoldTick = this._tick() + 100;
-                this._holdTo = 0;
             }
         }
         return Clutter.EVENT_PROPAGATE;
@@ -1916,10 +1921,7 @@ export class Manager {
                 let listActor = null;
 
                 // Cancel cache win timeout
-                if (this._actionWidgets.resetWinlist) {
-                    clearTimeout(this._actionWidgets.resetWinlist);
-                    this._actionWidgets.resetWinlist = 0;
-                }
+                this._clearTimeout('resetWinlist');
                 // Get cached window list
                 if (this._actionWidgets.cacheWinTabList) {
                     wins = this._actionWidgets.cacheWinTabList?.wins;
@@ -2129,13 +2131,11 @@ export class Manager {
 
                     // Clear cache after timeout
                     let me = this;
-                    this._actionWidgets.resetWinlist = setTimeout(
+                    this._setTimeout('resetWinlist',
                         function () {
                             me._actionWidgets
                                 .cacheWinTabList.actor.aniRelease();
                             me._actionWidgets.cacheWinTabList = null;
-                            clearTimeout(me._actionWidgets.resetWinlist);
-                            me._actionWidgets.resetWinlist = 0;
                         }, 500
                     );
                 }
@@ -2569,10 +2569,7 @@ export class Manager {
                     }
                     else if (ui <= 3) {
                         if (!this._actionWidgets[wid]) {
-                            if (this._actionWidgets.tilerHider) {
-                                clearTimeout(this._actionWidgets.tilerHider);
-                                this._actionWidgets.tilerHider = null;
-                            }
+                            this._clearTimeout('tilerHider');
                             let moarea = activeWin
                                 .get_work_area_current_monitor();
                             if (ui == 1) {
@@ -2610,10 +2607,7 @@ export class Manager {
                 else {
                     if (ui <= 3) {
                         // max, snap
-                        if (this._actionWidgets.tilerHider) {
-                            clearTimeout(this._actionWidgets.tilerHider);
-                            this._actionWidgets.tilerHider = null;
-                        }
+                        this._clearTimeout('tilerHider');
                         if (this._actionWidgets[wid] && (progress > 0)) {
                             if (ui == 1) {
                                 activeWin.maximize();
@@ -2625,11 +2619,9 @@ export class Manager {
                                 this._setSnapWindow(1);
                             }
                         }
-                        this._actionWidgets.tilerHider = setTimeout(
-                            function (me) {
-                                me._hidePreview();
-                                me._actionWidgets.tilerHider = null;
-                            }, 100, this);
+                        this._setTimeout('tilerHider', () => {
+                            this._hidePreview();
+                        }, 100);
                         this._actionWidgets[wid] = 0;
                     }
                     else {
