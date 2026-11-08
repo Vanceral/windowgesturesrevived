@@ -28,8 +28,8 @@
 - [x] Post a reviewer note identifying upstream provenance, AI assistance, API changes, and tested GNOME Shell version.
 - [x] Review 77992 rejected version 17 for timeout replacement/tracking and unnecessary generated comments.
 - [x] Build and inspect the version 18 archive with all manager timeouts tracked and cleared on replacement and destroy.
-- [ ] Submit version 18 to extensions.gnome.org and await the review decision.
-- [ ] Await the review decision for version 3.
+- [x] Submit version 18 to extensions.gnome.org as review 78094; version 3 is unreviewed.
+- [ ] Await the review decision for review 78094.
 
 ## Repeatable release checklist
 
