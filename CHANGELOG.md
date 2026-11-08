@@ -3,6 +3,14 @@
 All notable changes to Window Gestures Revived are recorded here. The version
 number matches `version` in `src/metadata.json`.
 
+## [18] - 2026-11-08
+
+### Fixed
+
+- Track gesture timeouts in the manager, replace pending timeouts by purpose,
+  and clear all pending timeouts when the manager is destroyed.
+- Remove redundant manager comments.
+
 ## [17] - 2026-11-06
 
 ### Fixed
